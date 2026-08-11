@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>henrik.games</title>
+        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    </head>
+    <body class="bg-white text-black h-screen w-full">
+        <div class="flex items-center h-full justify-center">
+            <div
+                id="countdown"
+                class="flex gap-6 text-5xl font-semibold tabular-nums"
+            >
+                <div data-unit="days">–</div>
+                <div data-unit="hours">–</div>
+                <div data-unit="minutes">–</div>
+                <div data-unit="seconds">–</div>
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+        <script>
+            const target = new Date(2026, 7, 28, 0, 0, 0);
+            const fields = {};
+            for (const el of document.querySelectorAll(
+                "#countdown [data-unit]",
+            ))
+                fields[el.dataset.unit] = el;
+
+            // Anchor the target on the monotonic clock so the sub-millisecond
+            // digits don't jump if the wall clock is adjusted mid-countdown.
+            const targetPerf = performance.now() + (target - Date.now());
+
+            function tick() {
+                const diff = targetPerf - performance.now();
+                if (diff <= 0) {
+                    document.getElementById("countdown").innerHTML =
+                        '<div class="text-5xl font-semibold">28. august!</div>';
+                    return;
+                }
+                const s = Math.floor(diff / 1000);
+                const nanos = Math.floor((diff % 1000) * 1e6);
+                fields.days.textContent = Math.floor(s / 86400);
+                fields.hours.textContent = String(
+                    Math.floor(s / 3600) % 24,
+                ).padStart(2, "0");
+                fields.minutes.textContent = String(
+                    Math.floor(s / 60) % 60,
+                ).padStart(2, "0");
+                fields.seconds.textContent =
+                    String(s % 60).padStart(2, "0") +
+                    "." +
+                    String(nanos).padStart(9, "0");
+                requestAnimationFrame(tick);
+            }
+            tick();
+        </script>
+    </body>
+</html>
